@@ -42,9 +42,14 @@ class LearningAgent(Agent):
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
         if not testing:
+            self.epsilon -= 0.0005
+            #self.epsilon -= 0.05 # linear
             self.trial += 1
-            #self.epsilon -= 0.05
-            self.epsilon -= 0.0000032*self.trial
+            #self.epsilon = 1.-0.00277*(self.trial-1)**2. # parabola convex
+            #self.epsilon = 0.75**(self.trial-1) # power concave
+            #self.epsilon = 1.-0.75**(20-self.trial) # power convex
+            #self.epsilon = 1.-0.33*math.log(self.trial) # log
+            
             
             #self.epsilon -= 2.* ( (1.*self.trial+1.)**(-3.) ) #-= 2. / ( (1.*self.trial+1.)**3 )
         
@@ -75,7 +80,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, tuple(inputs.items()))
+        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'])
 
         return state
 
@@ -89,7 +94,7 @@ class LearningAgent(Agent):
         ###########
         # Calculate the maximum Q-value of all actions for a given state
 
-        maxQ = sorted(self.Q[state].values(), reverse = True)[0]
+        maxQ = max(self.Q[state].values())
 
         return maxQ 
 
@@ -132,7 +137,11 @@ class LearningAgent(Agent):
             else:
                 maxQ = self.get_maxQ(state)
                 dict_maxQ = {k: v for k, v in self.Q[state].iteritems() if  abs(v - maxQ) < self.precision}
-                action = dict_maxQ.keys()[0]
+                actions = dict_maxQ.keys()
+                if len(actions) > 1:
+                    action = actions[ random.randint(0, len(actions)-1) ]
+                else:
+                    action = actions[0]
         else:
             action = self.valid_actions[ random.randint(0,3) ]
             
@@ -150,7 +159,7 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning:
-            self.Q[state][action] += self.alpha * reward
+            self.Q[state][action] += self.alpha  * ( reward - self.Q[state][action])
 
         return
 
@@ -188,7 +197,7 @@ def run():
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
     eps = 1.0
-    agent = env.create_agent(LearningAgent, learning = True, alpha=1., epsilon=eps)
+    agent = env.create_agent(LearningAgent, learning = True, alpha=0.5) #, epsilon=eps)
     
     ##############
     # Follow the driving agent
