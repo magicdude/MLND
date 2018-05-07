@@ -12690,14 +12690,15 @@ You may also use a decaying function for $\alpha$ (the learning rate) if you so 
 <li>in all other cases when the light is red the smartcab has to wait till the green light;</li>
 <li>if the light is green and the waypoint is forward the smartcab has to drive forward (irregardless of the states of the oncoming traffic and traffic from left);</li>
 <li>the smartcab has to go right if the light and waypoint are green and right respectively (irregardless of the states of the oncoming traffic and traffic from left);</li>
-<li>the smartcab has to wait till the there will be no oncoming traffic if the light, waypoint, oncoming are green, left, not none respectively (irregardless of the states of the traffic from left).</li>
+<li>the smartcab can go forward if the light, waypoint, oncoming are green, left, right/forward respectively (irregardless of the states of the traffic from left).</li>
+<li>the smartcab can go left, if the waypoint is left, the light is green, and the oncoming is none or left. (irregardless of the states of the traffic from left)</li>
 </ol>
 </li>
 </ul>
 <ul>
 <li><p>My <code>'sim_improved-learning.txt'</code> contains 96 recorded unique states of the self-driving agent, some of which have the highest Q-values for the correct (optimal) actions as well as states with suboptimal policies, examples of which I give below:</p>
 </li>
-<li><p>States with optimal policy (please note that the correct optimal Q-values are depicted in bold font):</p>
+<li><p>States with optimal policy (please note that the Q-values for the theoretically optimal action (for the particular state) are depicted in bold font):</p>
 </li>
 </ul>
 <table>
@@ -12742,7 +12743,7 @@ You may also use a decaying function for $\alpha$ (the learning rate) if you so 
 </tbody>
 </table>
 <ul>
-<li>Example of a state with faulty policy (here no optimal (unambiguous) policy can be defined given the Q-values):</li>
+<li>Example of a state with faulty policy (please note, that the falsely correct policy is stated in red):</li>
 </ul>
 <table>
 <thead><tr>
@@ -12763,12 +12764,12 @@ You may also use a decaying function for $\alpha$ (the learning rate) if you so 
 <td>1</td>
 <td>left</td>
 <td>green</td>
-<td>going forward</td>
-<td>going left</td>
-<td>1.15</td>
-<td>0.45</td>
-<td>-5.52</td>
-<td>-20.19</td>
+<td>going right</td>
+<td>none</td>
+<td><strong>0.34</strong></td>
+<td><font color='red'>0.67</font></td>
+<td>-4.75</td>
+<td>-20.22</td>
 <td>violation of the point 5 of the above policy   </td>
 </tr>
 </tbody>
